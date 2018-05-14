@@ -1,0 +1,30 @@
+{
+  "name": "devp-eu/tmcms-module-bilderlings-pay",
+  "type": "library",
+  "description": "Bilderlings Pay mopdule for TMCms",
+  "keywords": [
+    "Bilderlings Pay",
+    "cms",
+    "TMCms"
+  ],
+  "homepage": "http://devp.eu/",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Vadims Petrusevs",
+      "email": "info@devp.eu",
+      "homepage": "http://devp.eu/",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "devp-eu/tmcms-core": "dev-master",
+    "devp-eu/tmcms-panel": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "TMCms\\Modules\\BilderlingsPay\\": "src"
+    }
+  }
+  }
+}
