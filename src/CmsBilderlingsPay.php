@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace TMCms\Modules\BilderlingsPay;
 
+use TMCms\HTML\Cms\CmsTableHelper;
+use TMCms\Modules\BilderlingsPay\Entity\PaymentEntityRepository;
+
 \defined('INC') or exit;
 
 /**
@@ -11,8 +14,19 @@ namespace TMCms\Modules\BilderlingsPay;
  */
 class CmsBilderlingsPay
 {
-    public static function _default()
+    public function _default()
     {
-        echo 'TODO';
+        $payments = new PaymentEntityRepository();
+        $payments->addOrderByField($payments::FIELD_TS_ADDED, true);
+
+        echo CmsTableHelper::outputTable([
+            'data' => $payments,
+            'columns' => [
+                PaymentEntityRepository::FIELD_TS_ADDED => [
+                    'type' => 'date',
+                    'title' => w('date'),
+                ],
+            ],
+        ]);
     }
 }
