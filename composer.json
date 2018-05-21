@@ -19,7 +19,8 @@
   ],
   "require": {
     "devp-eu/tmcms-core": "dev-master",
-    "devp-eu/tmcms-panel": "dev-master"
+    "devp-eu/tmcms-panel": "dev-master",
+    "devp-eu/tmcms-module-orders": "dev-master"
   },
   "autoload": {
     "psr-4": {

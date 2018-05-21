@@ -5,6 +5,8 @@ namespace TMCms\Modules\BilderlingsPay;
 
 use TMCms\Modules\BilderlingsPay\Entity\PaymentEntity;
 use TMCms\Modules\IModule;
+use TMCms\Modules\Orders\Entity\OrderEntity;
+use TMCms\Orm\Entity;
 use TMCms\Traits\singletonInstanceTrait;
 
 \defined('INC') or exit;
@@ -19,21 +21,28 @@ class ModuleBilderlingsPay implements IModule
 
     const DIRECT_POST_URL = 'https://bpayprocessing.iamoffice.lv/direct/v1';
 
+    const CURRENCY_EUR = 'EUR';
+    const CURRENCY_DEFAULT = self::CURRENCY_EUR;
+
     /**
      * @param PaymentEntity $payment
      *
      * @return string
+     * @throws \InvalidArgumentException
      */
     public static function renderDirectPostPaymentRequestForm(PaymentEntity $payment): string
     {
         date_default_timezone_set('Europe/Riga');
 
-        $shop_name = $payment->getShopName(); // TODO from configs, set on load
-        $locale = 'lv_LV'; // TODO lng
-        $ShopPassword = '<secret_shop_code>'; // TODO set from config
-        $order_id = date('Y_m_d_H_i_s'); // TODO $order
-        $amount = '1.23'; // TODO set from order
-        $currency = 'EUR'; // TODO set from order
+        /** @var OrderEntity $order */
+        $order = $payment->getOrderEntity();
+
+        $shop_name = $payment->getConfigParam('shop_name');
+        $locale = \strtolower(LNG) . '_' . \strtoupper(LNG);
+        $ShopPassword = $payment->getConfigParam('shop_password');
+        $order_id = $order->getId();
+        $amount = $order->getSum();
+        $currency = self::CURRENCY_DEFAULT;
         $payment_method = 'FD_SMS';
         $bytes = openssl_random_pseudo_bytes(20);
         $xid = base64_encode($bytes);
@@ -52,39 +61,12 @@ class ModuleBilderlingsPay implements IModule
             'shop_name' => $shop_name,
             'customer.additional_params[\'locale\']' => $locale,
         ];
-        $html_post = '<html><body onLoad="document.frm1.submit();">' . "\n";
-        $html_post .= '<form method="POST" action="'. self::DIRECT_POST_URL .'" name="frm1">' . "\n";
+        $html_post = '<form method="POST" action="'. self::DIRECT_POST_URL .'" name="frm1">' . "\n";
         foreach ($params as $key => $value) {
-            $html_post .= '<input type=hidden name="' . $key . '" value="' . $value . '">' . "\n";
+            $html_post .= '<input type=hidden name="' . \htmlspecialchars((string)$key, \ENT_QUOTES) . '" value="' . \htmlspecialchars((string)$value, \ENT_QUOTES) . '">' . "\n";
         }
-        $html_post .= '</form></body></html>';
+        $html_post .= '</form><script>document.frm1.submit();</script>';
 
         return $html_post;
-    }
-
-    public static function handleDirectPostNotificationUrl() {
-//        $notify_logs = 'callback_' . date('Y_m_d_H_i_s');
-//
-//// You can use this response to analyze status of payment
-//        if ($_POST['status'] == 'SUCCEEDED') {
-//            file_put_contents('./callback_logs/' . 'succ_' . $notify_logs, print_r($_POST, 1), FILE_APPEND | LOCK_EX);
-//        } else {
-//            file_put_contents('./callback_logs/' . 'failed_' . $notify_logs, print_r($_POST, 1), FILE_APPEND | LOCK_EX);
-//        }
-//        echo 'Persisted to ' . $notify_logs;
-//        die;
-    }
-
-    public static function handleDirectPostReturnUrl() {
-//        date_default_timezone_set('Europe/Riga');
-//        $notify_logs = 'callback_' . date('Y_m_d_H_i_s');
-//
-//// You can use this response to analyze status of payment
-//        if ($_POST['status'] == 'SUCCEEDED') {
-//            file_put_contents('./callback_logs/' . 'succ_ret_' . $notify_logs, print_r($_POST, 1), FILE_APPEND | LOCK_EX);
-//        } else {
-//            file_put_contents('./callback_logs/' . 'failed_ret_' . $notify_logs, print_r($_POST, 1), FILE_APPEND | LOCK_EX);
-//        }
-//        die('<PRE>'.print_r($_POST,1));
     }
 }
