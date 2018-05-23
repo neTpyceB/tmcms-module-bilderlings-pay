@@ -24,6 +24,10 @@ class ModuleBilderlingsPay implements IModule
     const CURRENCY_EUR = 'EUR';
     const CURRENCY_DEFAULT = self::CURRENCY_EUR;
 
+    const PAYMENT_METHOD_FD_SMS = 'FD_SMS';
+    const PAYMENT_METHOD_FD_SMS_3D_OPTIONAL = 'FD_SMS_3D_OPTIONAL';
+    const PAYMENT_METHOD_DEFAULT = self::PAYMENT_METHOD_FD_SMS_3D_OPTIONAL;
+
     /**
      * @param PaymentEntity $payment
      *
@@ -43,7 +47,7 @@ class ModuleBilderlingsPay implements IModule
         $order_id = $order->getId();
         $amount = $order->getSum();
         $currency = self::CURRENCY_DEFAULT;
-        $payment_method = 'FD_SMS';
+        $payment_method = self::PAYMENT_METHOD_DEFAULT;
         $bytes = openssl_random_pseudo_bytes(20);
         $xid = base64_encode($bytes);
         $X_Nonce = str_replace(['+', '/', '='], '1', $xid);
