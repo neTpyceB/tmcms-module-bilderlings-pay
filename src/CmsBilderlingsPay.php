@@ -26,6 +26,12 @@ class CmsBilderlingsPay
                     'type' => 'date',
                     'title' => w('date'),
                 ],
+                PaymentEntityRepository::FIELD_ORDER_ID => [],
+                PaymentEntityRepository::FIELD_STATUS => [],
+                PaymentEntityRepository::FIELD_AMOUNT => [],
+                PaymentEntityRepository::FIELD_CURRENCY => [],
+                PaymentEntityRepository::FIELD_INVOICE_REF => [],
+                PaymentEntityRepository::FIELD_ERROR_CODE => [],
             ],
         ]);
     }
